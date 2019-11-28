@@ -3,6 +3,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,14 +32,14 @@ import okhttp3.Response;
 
 public class TwoFragment extends Fragment {
 
-    StringBuilder response;
-    InputStream in;
-    HttpURLConnection connection = null;
-    BufferedReader reader = null;
+    private StringBuilder response;
+    private InputStream in;
+    private HttpURLConnection connection = null;
+    private BufferedReader reader = null;
+    private OkHttpClient okHttpClient;
     private ListView listView;
     private ListViewAdapter adapter;
     private List<Goods> goods = new ArrayList<>();
-    private OkHttpClient okHttpClient;
 
 
     @Override
@@ -47,9 +48,9 @@ public class TwoFragment extends Fragment {
         listView = view.findViewById(R.id.listView);
         okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)          //设置连接超时时间
                 .readTimeout(20, TimeUnit.SECONDS)                      //设置读取超时时间
-                .build();;
+                .build();
         String url = "https://api.myjson.com/bins/8ru3p";
-        getJson(url);
+        getJson2(url);
         return view;
     }
 
@@ -59,14 +60,15 @@ public class TwoFragment extends Fragment {
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {                       //不写也没事
+            public void onFailure(Call call, IOException e) {
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
+                Log.d("chen",json);
                 showInListview(json);
             }
-        });             //网络抓取过程
+        });
     }               //okhttp
 
     private void getJson2(final String url){
@@ -88,6 +90,7 @@ public class TwoFragment extends Fragment {
                    while ((line = reader.readLine()) != null){
                        response.append(line);
                    }
+                    Log.d("chen", response.toString());
                    showInListview(response.toString());
 
                 } catch (MalformedURLException e) {
